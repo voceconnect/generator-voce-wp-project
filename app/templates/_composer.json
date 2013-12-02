@@ -1,0 +1,37 @@
+{
+    "name": "voceconnect/<%= projectSlug %>",
+    "description": "<%= projectName %>",
+    "authors": [],
+    "type": "project",
+    "repositories": [
+        {
+            "type": "composer",
+            "url" : "http://wp-plugins.packagist.voceconnect.com/"
+        },
+        {
+            "type": "composer",
+            "url" : "http://packagist.voceconnect.com"
+        }
+    ],
+    "config": {
+        "vendor-dir": "wp-content/mu-plugins"
+    },
+    "require"     : {
+        "voceconnect/wordpress": "~3.7.0",
+        "wpackagist/memcached": "2.0.0"
+    },
+    "require-dev" : {
+        "wpackagist/debug-bar": "9999999-dev",
+        "wpackagist/debug-bar-extender": "9999999-dev",
+        "wpackagist/debug-bar-cron": "9999999-dev",
+        "wpackagist/developer": "9999999-dev",
+        "wpackagist/rewrite-rules-inspector": "9999999-dev",
+        "wpackagist/log-deprecated-notices": "9999999-dev"
+    },
+    "extra"       : {
+        "installer-paths": {
+            "wp/": ["voceconnect/wordpress"],
+            "wp-content/drop-ins/{$name}/": ["wpackagist/memcached"]
+        }
+    }   
+}

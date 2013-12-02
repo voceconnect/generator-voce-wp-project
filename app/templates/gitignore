@@ -1,0 +1,25 @@
+# system files
+.htaccess
+.htpasswd
+/config
+.DS_Store
+Thumbs.db
+/nbproject/private/
+
+# npm files
+/node_modules
+
+# generated files
+sitemap.xml*
+.sass-cache
+
+# composer controlled files
+/wp-content/plugins
+/wp-content/drop-ins
+/wp-content/mu-plugins
+
+# wpms and wordpress files
+/wp
+/wp-config.php
+/wp-content/uploads/*
+/wp-content/cache/*

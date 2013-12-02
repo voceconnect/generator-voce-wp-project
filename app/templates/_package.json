@@ -1,0 +1,15 @@
+{
+    "name": "<%= projectSlug %>",
+    "description": "<%= projectName %> Project",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:voceconnect/<%= projectSlug %>.git"
+    },
+    "bugs": {
+        "url": "https://github.com/voceconnect/<%= projectSlug %>/issues"
+    },
+    "devDependencies": {
+        "grunt-voce-plugins": "latest"
+    }
+}
