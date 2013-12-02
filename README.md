@@ -1,4 +1,4 @@
-# generator-wordpress-project [![Build Status](https://secure.travis-ci.org/prettyboymp/generator-wordpress-project.png?branch=master)](https://travis-ci.org/prettyboymp/generator-wordpress-project)
+# generator-voce-wp-project [![Build Status](https://secure.travis-ci.org/prettyboymp/generator-voce-wp-project.png?branch=master)](https://travis-ci.org/prettyboymp/generator-voce-wp-project)
 
 A generator for [Yeoman](http://yeoman.io).
 
@@ -23,16 +23,16 @@ $ npm install -g yo
 
 Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
 
-To install generator-wordpress-project from npm, run:
+To install generator-voce-wp-project from npm, run:
 
 ```
-$ npm install -g generator-wordpress-project
+$ npm install -g generator-voce-wp-project
 ```
 
 Finally, initiate the generator:
 
 ```
-$ yo wordpress-project
+$ yo voce-wp-project
 ```
 
 ### Getting To Know Yeoman
