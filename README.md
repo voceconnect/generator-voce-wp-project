@@ -1,4 +1,4 @@
-# generator-voce-wp-project [![Build Status](https://secure.travis-ci.org/prettyboymp/generator-voce-wp-project.png?branch=master)](https://travis-ci.org/prettyboymp/generator-voce-wp-project)
+# generator-voce-wp-project [![Build Status](https://secure.travis-ci.org/voceconnect/generator-voce-wp-project.png?branch=master)](https://travis-ci.org/voceconnect/generator-voce-wp-project)
 
 A generator for [Yeoman](http://yeoman.io).
 

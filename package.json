@@ -5,17 +5,17 @@
   "keywords": [
     "yeoman-generator"
   ],
-  "homepage": "https://github.com/prettyboymp/generator-voce-wp-project",
-  "bugs": "https://github.com/prettyboymp/generator-voce-wp-project/issues",
+  "homepage": "https://github.com/voceconnect/generator-voce-wp-project",
+  "bugs": "https://github.com/voceconnect/generator-voce-wp-project/issues",
   "author": {
     "name": "Michael Pretty",
     "email": "",
-    "url": "https://github.com/prettyboymp"
+    "url": "https://github.com/voceconnect"
   },
   "main": "app/index.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/prettyboymp/generator-voce-wp-project.git"
+    "url": "git://github.com/voceconnect/generator-voce-wp-project.git"
   },
   "scripts": {
     "test": "mocha"
