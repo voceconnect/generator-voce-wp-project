@@ -1,30 +1,59 @@
 'use strict';
-var util = require('util');
-var path = require('path');
-var yeoman = require('yeoman-generator');
-var _ = require('lodash');
-var fs = require('fs');
 
+
+var util    = require('util');
+var path    = require('path');
+var yeoman  = require('yeoman-generator');
+var _       = require('lodash');
+var fs      = require('fs');
+var chalk   = require('chalk');
 _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
-var WordpressProjectGenerator = module.exports = function WordpressProjectGenerator(args, options, config) {
+var VoceWPProjectGenerator = module.exports = function VoceWPProjectGenerator(args, options) {
+  
   yeoman.generators.Base.apply(this, arguments);
 
   this.on('end', function () {
     this.installDependencies({ skipInstall: options['skip-install'] });
   });
 
-  this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
 
-util.inherits(WordpressProjectGenerator, yeoman.generators.Base);
+util.inherits(VoceWPProjectGenerator, yeoman.generators.Base);
 
-WordpressProjectGenerator.prototype.askFor = function askFor() {
+VoceWPProjectGenerator.prototype.askFor = function askFor() {
   var cb = this.async();
-
-  // have Yeoman greet the user.
-  console.log(this.yeoman);
+ 
+  var welcome = 
+    chalk.magenta('\n                       : ') + chalk.yellow('? ') + chalk.magenta(',') +
+    chalk.magenta('\n                     ,') + chalk.yellow('I??????') + chalk.magenta('.') +
+    chalk.magenta('\n                   ?') + chalk.yellow('.?II???.??') + chalk.magenta(':') +
+    chalk.magenta('\n                  ?') + chalk.yellow(':I   ~ ~   :') + chalk.magenta('.') +
+    chalk.magenta('\n                  :') + chalk.yellow('.?II???????:~') + chalk.magenta(':') +
+    chalk.magenta('\n                 ~:') + chalk.yellow('??????: ?I=??') + chalk.magenta('::') +
+    chalk.magenta('\n                 ::') + chalk.yellow('I?.: ...:?.,?,') + chalk.magenta(':') +
+    chalk.magenta('\n                ~:') + chalk.yellow('  I    =I:   ?  ') + chalk.magenta('::') +
+    chalk.magenta('\n                ::') + chalk.yellow('  ? :I???? II  ') + chalk.magenta('::') +
+    chalk.magenta('\n               ?::') + chalk.yellow('  ???????????  ') + chalk.magenta('::') +
+    chalk.magenta('\n               ~::') + chalk.yellow('  ??I     I?I  ') + chalk.magenta('::') +
+    chalk.magenta('\n               :::               ') + chalk.magenta('::?') +
+    chalk.magenta('\n               :::              ') + chalk.magenta(':::=') +
+    chalk.magenta('\n        ~      ::::            ') + chalk.magenta(':::::     ,~') +
+    chalk.magenta('\n       ::::? ,:::::::        ,::::::~  ,:::?') +
+    chalk.magenta('\n      ,::::~=     :::::    :::::~    ?:::::,') +
+    chalk.magenta('\n      :::::::::,     ?::::::,?    ,:::::::::') +
+    chalk.magenta('\n       ? = ,:::::::::        ::~::::::::~ ?') +
+    chalk.magenta('\n              ?,:::::::::::::::::::~') +
+    chalk.magenta('\n                   ~::::::::::') +
+    chalk.magenta('\n                ::::::::::::::::::') +
+    chalk.magenta('\n       ,:::::::::::::       :::::::::::::::=') +
+    chalk.magenta('\n      ,::::::::::=              ::::::::::::') +
+    chalk.magenta('\n       ::::::?                      ?::::::,') +
+    chalk.magenta('\n       =::::                          :::::') +
+    chalk.magenta('\n                                         ?') +
+    chalk.bold.red('\n\n         "Kneel before your master, fool!"\n\n\n');
+  console.log(welcome);
 
   var prompts = [
     {
@@ -42,10 +71,19 @@ WordpressProjectGenerator.prototype.askFor = function askFor() {
       }
     },
     {
+      name: 'generateTheme',
+      type: 'confirm',
+      message: 'Would you like to generate a theme from Skeletor?',
+      default: true
+    },
+    {
       name: 'themeName',
       message: 'What would you like to name the theme?',
       default: function(answers) {
         return answers.projectName;
+      },
+      when: function(answers) {
+        return answers.generateTheme;
       }
     }
   ];
@@ -53,42 +91,105 @@ WordpressProjectGenerator.prototype.askFor = function askFor() {
   this.prompt(prompts, function (props) {
     this.projectName = props.projectName;
     this.projectSlug = props.projectSlug;
-    this.themeName = props.themeName;
+    this.generateTheme = props.generateTheme;
+    if(this.generateTheme) {
+      this.themeName = props.themeName;
+      this.themeSlug = _.slugify(this.themeName);
+      this.themeUnderScored = this.themeSlug.replace(/\-/g, '_');
+      this.themeTextDomain = this.themeUnderScored;
+    }
     cb();
   }.bind(this));
 };
 
-WordpressProjectGenerator.prototype.app = function app() {
-  var themeSlug = _.slugify(this.themeName),
-      appDir = this.projectSlug;
+VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
   this.template('_package.json', 'package.json');
-  this.template('_gruntfile.js', 'gruntfile.js');
+  this.template('_Gruntfile.js', 'Gruntfile.js');
   this.template('_composer.json', 'composer.json');
   this.copy('gitignore', '.gitignore');
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
-
   //setup object-cache symlink
   fs.symlinkSync('wp-content/drop-ins/memcached/object-cache.php', 'wp-content/object-cache.php');
+};
 
-  
+VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
+  var done = this.async(),
+      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz',
+      //themeArchive = 'https://github.com/Automattic/_s/archive/master.tar.gz',
+      themeDir = path.join('tmp', this.themeSlug);
 
-  //setup the theme --full setup for now
-  this.mkdir('wp-content/themes/' + themeSlug);
-  this.mkdir('wp-content/themes/' + themeSlug + '/sass');
-  this.mkdir('wp-content/themes/' + themeSlug + '/images');
-  this.mkdir('wp-content/themes/' + themeSlug + '/js');
-
-  this.copy('theme/index.php', 'wp-content/themes/' + themeSlug + '/index.php');
-  this.copy('theme/config.rb', 'wp-content/themes/' + themeSlug + '/config.rb');
-  this.copy('theme/main.js', 'wp-content/themes/' + themeSlug + '/js/main.js');
-  this.template('theme/_styles.scss', 'wp-content/themes/' + themeSlug + '/sass/styles.scss');
-  this.template('theme/_functions.php', 'wp-content/themes/' + themeSlug + '/functions.php');
+  //download & expand https://github.com/voceconnect/skeletor/archive/master.tar.gz
+  if(this.generateTheme) {
+    this.tarball(themeArchive, themeDir, function(err) {
+      if(err) {
+        done(err);
+      }
+      done();
+    });
+  } else {
+    done();
+  }
 
 };
 
-WordpressProjectGenerator.prototype.projectfiles = function projectfiles() {
 
-  //this.copy('editorconfig', '.editorconfig');
-  //this.copy('jshintrc', '.jshintrc');
+VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
+  if(!this.generateTheme) return;
+  var themeDir = path.join('wp-content/themes/', this.themeSlug);
+  var files = this.expandFiles('**/*', { cwd: path.join('tmp', this.themeSlug), dot: true});
+  var me = this;
+  var ignoreFiles = [
+    '.git',
+    'LICENSE',
+    'README',
+    '.gitignores',
+    'jshintrc',
+    'Gruntfile.js',
+    'Gruntfile.coffee',
+    'gruntfile.js',
+    'gruntfile.coffee'
+  ];
+  var replacements = [
+    {find: /Text Domain: _s/g, replace: 'Text Domain: ' + this.themeTextDomain},
+    {find: /'_skeletor'/g, replace: "'" + this.themeTextDomain + "'"},
+    {find: /_skeletor-/g, replace: this.themeSlug},
+    {find: /_skeletor_/g, replace: this.themeUnderScored + '_'},
+    {find: / _skeletor/g, replace: ' ' + this.themeName}
+  ];
+
+  files.forEach(function(file) {
+    var fileContents;
+    var filePath = path.join(themeDir, file);
+    var tmpFilePath = path.join('tmp', this.themeSlug, file);
+    if(ignoreFiles.indexOf(file) !== -1) {
+      return;
+    }
+
+    //merge dependencies into project's composer.json
+    if(file === 'composer.json') {
+      projectComposer = JSON.parse( me.readFileAsString('composer.json') );
+      themeComposer = JSON.parse( me.readFileAsString(filePath) );
+      _.merge(projectComposer.require, themeComposer.require);
+      _.merge(projectComposer['require'], themeComposer['require-dev']);
+      me.write('composer.json', JSON.stringify(projectComposer, null, 4));
+      return;
+    }
+
+    //copy the file and make replacements
+    fileContents = me.readFileAsString(tmpFilePath);
+    for(var i =0; i < replacements.length; i++) {
+      fileContents = fileContents.replace(replacements[i].find, replacements[i].replace);
+    }
+    me.write(filePath, fileContents);
+  }, me);
+
+};
+
+VoceWPProjectGenerator.prototype.cleanupTheme = function cleanupTheme() {
+  if(!this.generateTheme) return;
+  var exec = require('child_process').exec;
+  var done = this.async();
+
+  exec('rm -rf ./tmp', done);
 };

@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         }
       },
       "theme": [
-        "wp-content/themes/<%= _.slugify(themeName) %>/js/main.js"
+        "wp-content/themes/<%= themeSlug %>/js/script.js"
       ],
     },
     "uglify": {
@@ -35,11 +35,11 @@ module.exports = function(grunt) {
           "preserveComments": "some"
         },
         "files": {
-          "wp-content/themes/<%= _.slugify(themeName) %>/js/main.min.js": [
-            "wp-content/themes/<%= _.slugify(themeName) %>/js/main.js"
+          "wp-content/themes/<%= themeSlug %>/js/main.min.js": [
+            "wp-content/themes/<%= themeSlug %>/js/script.js"
           ],          
-          "wp-content/themes/<%= _.slugify(themeName) %>/js/libs/bootstrap.min.js": [
-            "wp-content/themes/<%= _.slugify(themeName) %>/js/libs/bootstrap/*.js"
+          "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap.min.js": [
+            "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap/*.js"
           ]
         }
       }
@@ -47,9 +47,9 @@ module.exports = function(grunt) {
     "concat": {
       "bootstrap": {
         "src": [
-          "wp-content/themes/<%= _.slugify(themeName) %>/js/libs/bootstrap/*.js"
+          "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap/*.js"
         ],
-        "dest": "wp-content/themes/<%= _.slugify(themeName) %>/js/libs/bootstrap.js"
+        "dest": "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap.js"
       }
     },
     "imagemin": {
@@ -57,17 +57,17 @@ module.exports = function(grunt) {
         "files": [
           {
             "expand": true,
-            "cwd": "wp-content/themes/<%= _.slugify(themeName) %>/images/",
+            "cwd": "wp-content/themes/<%= themeSlug %>/images/",
             "src": "**/*.{png,jpg}",
-            "dest": "wp-content/themes/<%= _.slugify(themeName) %>/images/"
+            "dest": "wp-content/themes/<%= themeSlug %>/images/"
           }
         ]
       }
     },
     "compass": {
       "options": {
-        "config": "wp-content/themes/<%= _.slugify(themeName) %>/config.rb",
-        "basePath": "wp-content/themes/<%= _.slugify(themeName) %>/",
+        "config": "wp-content/themes/<%= themeSlug %>/config.rb",
+        "basePath": "wp-content/themes/<%= themeSlug %>/",
         "force": true
       },
       "production": {
@@ -83,11 +83,11 @@ module.exports = function(grunt) {
     },
     "watch": {
       "scripts": {
-        "files": "wp-content/themes/<%= _.slugify(themeName) %>/js/**/*.js",
+        "files": "wp-content/themes/<%= themeSlug %>/js/**/*.js",
         "tasks": ["jshint", "concat"]
       },
       "images": {
-        "files": "wp-content/themes/<%= _.slugify(themeName) %>/images/**/*.{png,jpg,gif}",
+        "files": "wp-content/themes/<%= themeSlug %>/images/**/*.{png,jpg,gif}",
         "tasks": ["imagemin"]
       },
       "composer": {
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
         "tasks": ["composer:update"]
       },
       "styles": {
-        "files": "wp-content/themes/<%= _.slugify(themeName) %>/sass/**/*.scss",
+        "files": "wp-content/themes/<%= themeSlug %>/sass/**/*.scss",
         "tasks": ["compass"]
       }
     },

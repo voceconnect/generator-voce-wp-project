@@ -18,7 +18,8 @@
     },
     "require"     : {
         "voceconnect/wordpress": "~3.7.0",
-        "wpackagist/memcached": "2.0.0"
+        "wpackagist/memcached": "2.0.2",
+        "voceconnect/required-plugins": "~0.2.0"
     },
     "require-dev" : {
         "wpackagist/debug-bar": "9999999-dev",

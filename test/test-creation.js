@@ -6,6 +6,7 @@ var helpers = require('yeoman-generator').test;
 
 
 describe('voce-wp-project generator', function () {
+    this.timeout(1000000);
     beforeEach(function (done) {
         helpers.testDirectory(path.join(__dirname, 'temp'), function (err) {
             if (err) {
@@ -30,13 +31,14 @@ describe('voce-wp-project generator', function () {
             'wp-content/themes/test-theme/config.rb',
             'wp-content/themes/test-theme/functions.php',
             'wp-content/themes/test-theme/index.php',
-            'wp-content/themes/test-theme/sass/styles.scss',
-            'wp-content/themes/test-theme/js/main.js'
+            'wp-content/themes/test-theme/sass/style.scss',
+            'wp-content/themes/test-theme/js/script.js'
         ];
 
         helpers.mockPrompt(this.app, {
             'projectName': 'Test Voce Project',
             'projectSlug': 'test-voce-project',
+            'generateTheme': true,
             'themeName': 'Test Theme'
         });
         this.app.options['skip-install'] = true;

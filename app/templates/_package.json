@@ -1,6 +1,6 @@
 {
     "name": "<%= projectSlug %>",
-    "description": "<%= projectName %> Project",
+    "description": "<%= projectName %>",
     "version": "0.1.0",
     "repository": {
         "type": "git",
