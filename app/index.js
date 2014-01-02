@@ -97,6 +97,10 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
       this.themeSlug = _.slugify(this.themeName);
       this.themeUnderScored = this.themeSlug.replace(/\-/g, '_');
       this.themeTextDomain = this.themeUnderScored;
+    } else {
+      //default to project based names for templates, may change so these are additional questions in the future
+      this.themeName = props.projectName;
+      this.themeSlug = _.slugify(this.themeName);
     }
     cb();
   }.bind(this));
