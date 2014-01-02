@@ -114,22 +114,18 @@ VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
 };
 
 VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
+  if(!this.generateTheme) return;
   var done = this.async(),
-      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz',
-      //themeArchive = 'https://github.com/Automattic/_s/archive/master.tar.gz',
+      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz';
       themeDir = path.join('tmp', this.themeSlug);
 
   //download & expand https://github.com/voceconnect/skeletor/archive/master.tar.gz
-  if(this.generateTheme) {
-    this.tarball(themeArchive, themeDir, function(err) {
-      if(err) {
-        done(err);
-      }
-      done();
-    });
-  } else {
+  this.tarball(themeArchive, themeDir, function(err) {
+    if(err) {
+      done(err);
+    }
     done();
-  }
+  });
 
 };
 
