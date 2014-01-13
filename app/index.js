@@ -114,13 +114,14 @@ VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
   //setup object-cache symlink
+  fs.unlinkSync('wp-content/object-cache.php');
   fs.symlinkSync('wp-content/drop-ins/memcached/object-cache.php', 'wp-content/object-cache.php');
 };
 
 VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
   if(!this.generateTheme) return;
   var done = this.async(),
-      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz';
+      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz',
       themeDir = path.join('tmp', this.themeSlug);
 
   //download & expand https://github.com/voceconnect/skeletor/archive/master.tar.gz
