@@ -114,7 +114,9 @@ VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
   //setup object-cache symlink
-  fs.unlinkSync('wp-content/object-cache.php');
+  try {
+    fs.unlinkSync('wp-content/object-cache.php');
+  } catch(e) {}
   fs.symlinkSync('wp-content/drop-ins/memcached/object-cache.php', 'wp-content/object-cache.php');
 };
 
