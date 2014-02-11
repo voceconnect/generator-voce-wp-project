@@ -9,101 +9,29 @@ module.exports = function(grunt) {
 
   // Project configuration.
   grunt.initConfig({
-    "jshint": {
-      "options": {
-        "curly": true,
-        "eqeqeq": true,
-        "eqnull": true,
-        "browser": true,
-        "plusplus": true,
-        "undef": true,
-        "unused": true,
-        "trailing": true,
-        "globals": {
-          "jQuery": true,
-          "$": true,
-          "ajaxurl": true
-        }
-      },
-      "theme": [
-        "wp-content/themes/<%= themeSlug %>/js/script.js"
-      ],
-    },
-    "uglify": {
-      "theme": {
-        "options": {
-          "preserveComments": "some"
-        },
-        "files": {
-          "wp-content/themes/<%= themeSlug %>/js/main.min.js": [
-            "wp-content/themes/<%= themeSlug %>/js/script.js"
-          ],          
-          "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap.min.js": [
-            "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap/*.js"
-          ]
-        }
-      }
-    },
-    "concat": {
-      "bootstrap": {
-        "src": [
-          "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap/*.js"
-        ],
-        "dest": "wp-content/themes/<%= themeSlug %>/js/libs/bootstrap.js"
-      }
-    },
     "imagemin": {
       "theme": {
         "files": [
           {
             "expand": true,
-            "cwd": "wp-content/themes/<%= themeSlug %>/images/",
+            "cwd": "wp-content/themes/<%= themeSlug %>/",
             "src": "**/*.{png,jpg}",
-            "dest": "wp-content/themes/<%= themeSlug %>/images/"
+            "dest": "wp-content/themes/<%= themeSlug %>/"
           }
         ]
       }
     },
-    "compass": {
-      "options": {
-        "config": "wp-content/themes/<%= themeSlug %>/config.rb",
-        "basePath": "wp-content/themes/<%= themeSlug %>/",
-        "force": true
-      },
-      "production": {
-        "options": {
-          "environment": "production"
-        }
-      },
-      "development": {
-        "options": {
-          "environment": "development"
-        }
-      }
-    },
     "watch": {
-      "scripts": {
-        "files": "wp-content/themes/<%= themeSlug %>/js/**/*.js",
-        "tasks": ["jshint", "concat"]
-      },
       "images": {
         "files": "wp-content/themes/<%= themeSlug %>/images/**/*.{png,jpg,gif}",
         "tasks": ["imagemin"]
-      },
-      "composer": {
-        "files": "composer.json",
-        "tasks": ["composer:update"]
-      },
-      "styles": {
-        "files": "wp-content/themes/<%= themeSlug %>/sass/**/*.scss",
-        "tasks": ["compass"]
       }
     },
     "build": {
-      "production": [ "uglify", "composer:install:no-dev:optimize-autoloader", "compass:production" ],
-      "uat": [ "uglify", "composer:install:no-dev:optimize-autoloader", "compass:production" ],
-      "staging": [ "concat", "composer:install", "compass:development" ],
-      "development": [ "concat", "composer:install", "compass:development" ]
+      "production": [ "composer:install:no-dev:optimize-autoloader" ],
+      "uat": [ "composer:install:no-dev:optimize-autoloader"],
+      "staging": [ "composer:install" ],
+      "development": [ "composer:install" ]
     }
   });
 

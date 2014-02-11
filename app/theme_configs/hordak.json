@@ -1,0 +1,10 @@
+{
+	"url": "git@github.com:voceconnect/hordak.git",
+	"replacements": [
+		{"find": "Text Domain: _hordak", "replace" : "Text Domain: <%= themeTextDomain %>"},
+		{"find": "'_hordak'", "replace" : "'<%= themeTextDomain %>'"},
+		{"find": "_hordak-", "replace" : "<%= themeSlug %>"},
+		{"find": "_hordak_", "replace" : "<%= themeUnderScored %>_"},
+		{"find": " _hordak", "replace" : " <%= themeName %>"}
+	]
+}

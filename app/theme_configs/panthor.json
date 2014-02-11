@@ -1,0 +1,10 @@
+{
+	"url": "git@github.com:voceconnect/panthor.git",
+	"replacements": [
+		{"find": "Text Domain: panthor", "replace" : "Text Domain: <%= themeTextDomain %>"},
+		{"find": "'panthor'", "replace" : "'<%= themeTextDomain %>'"},
+		{"find": "panthor-", "replace" : "<%= themeSlug %>"},
+		{"find": "panthor_", "replace" : "<%= themeUnderScored %>_"},
+		{"find": " Panthor", "replace" : " <%= themeName %>"}
+	]
+}

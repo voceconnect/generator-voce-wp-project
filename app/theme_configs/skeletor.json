@@ -1,0 +1,10 @@
+{
+	"url": "https://github.com/voceconnect/skeletor/archive/master.tar.gz",
+	"replacements": [
+		{"find": "Text Domain: skeletor", "replace" : "Text Domain: <%= themeTextDomain %>"},
+		{"find": "'skeletor'", "replace" : "'<%= themeTextDomain %>'"},
+		{"find": "skeletor-", "replace" : "<%= themeSlug %>"},
+		{"find": "skeletor_", "replace" : "<%= themeUnderScored %>_"},
+		{"find": " skeletor", "replace" : " <%= themeName %>"}
+	]
+}

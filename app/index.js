@@ -11,11 +11,17 @@ _.str = require('underscore.string');
 _.mixin(_.str.exports());
 
 var VoceWPProjectGenerator = module.exports = function VoceWPProjectGenerator(args, options) {
-  
   yeoman.generators.Base.apply(this, arguments);
 
   this.on('end', function () {
-    this.installDependencies({ skipInstall: options['skip-install'] });
+    this.installDependencies({ 
+      skipInstall: options['skip-install'], 
+      bower: false,
+      callback: function() {
+        console.log(chalk.green('\nBuilding the project for the first time...\n\n'));
+        this.spawnCommand('grunt', ['build:development']);
+      }.bind(this)
+    });
   });
 
 };
@@ -24,7 +30,7 @@ util.inherits(VoceWPProjectGenerator, yeoman.generators.Base);
 
 VoceWPProjectGenerator.prototype.askFor = function askFor() {
   var cb = this.async();
- 
+
   var welcome = 
     chalk.magenta('\n                       : ') + chalk.yellow('? ') + chalk.magenta(',') +
     chalk.magenta('\n                     ,') + chalk.yellow('I??????') + chalk.magenta('.') +
@@ -33,7 +39,7 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
     chalk.magenta('\n                  :') + chalk.yellow('.?II???????:~') + chalk.magenta(':') +
     chalk.magenta('\n                 ~:') + chalk.yellow('??????: ?I=??') + chalk.magenta('::') +
     chalk.magenta('\n                 ::') + chalk.yellow('I?.: ...:?.,?,') + chalk.magenta(':') +
-    chalk.magenta('\n                ~:') + chalk.yellow('  I    =I:   ?  ') + chalk.magenta('::') +
+    chalk.magenta('\n                ~:') + chalk.yellow('  I    =I:   ? ') + chalk.magenta('::') +
     chalk.magenta('\n                ::') + chalk.yellow('  ? :I???? II  ') + chalk.magenta('::') +
     chalk.magenta('\n               ?::') + chalk.yellow('  ???????????  ') + chalk.magenta('::') +
     chalk.magenta('\n               ~::') + chalk.yellow('  ??I     I?I  ') + chalk.magenta('::') +
@@ -73,7 +79,7 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
     {
       name: 'generateTheme',
       type: 'confirm',
-      message: 'Would you like to generate a theme from Skeletor?',
+      message: 'Would you like to generate a theme from a template theme?',
       default: true
     },
     {
@@ -81,6 +87,24 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
       message: 'What would you like to name the theme?',
       default: function(answers) {
         return answers.projectName;
+      },
+      when: function(answers) {
+        return answers.generateTheme;
+      }
+    },
+    {
+      name: 'themeBase',
+      type: 'list',
+      message: 'What base theme would you like to use?',
+      default: 0,
+      choices: function() {
+        var files = fs.readdirSync(__dirname + '/theme_configs/');
+        var options = [];
+
+        for(var i in files) {
+          options.push( files[i].slice(0, -5) );
+        }
+        return options;
       },
       when: function(answers) {
         return answers.generateTheme;
@@ -97,6 +121,7 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
       this.themeSlug = _.slugify(this.themeName);
       this.themeUnderScored = this.themeSlug.replace(/\-/g, '_');
       this.themeTextDomain = this.themeUnderScored;
+      this.themeBase = props.themeBase;
     } else {
       //default to project based names for templates, may change so these are additional questions in the future
       this.themeName = props.projectName;
@@ -106,11 +131,83 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
   }.bind(this));
 };
 
-VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
-  this.template('_package.json', 'package.json');
-  this.template('_Gruntfile.js', 'Gruntfile.js');
-  this.template('_composer.json', 'composer.json');
-  this.copy('gitignore', '.gitignore');
+VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
+  if(!this.generateTheme) return;
+
+  var themeConfig = require('./theme_configs/' + this.themeBase );
+  var done = this.async(),
+      themeDir = path.join('tmp', this.themeSlug);
+
+  if(themeConfig.url.substring(0, 4) === 'git@') {
+    this.spawnCommand('git', ['clone', themeConfig.url, themeDir])
+      .on('exit', function(err) {
+        if(err) {
+          return done(err);
+        } 
+        return done();
+      });
+  } else {
+    this.tarball(themeConfig.url, themeDir, function(err) {
+      if(err) {
+        done(err);
+      }
+      done();
+    });
+  }
+
+};
+
+VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() {
+  var defaultContent,
+      themeContent,
+      line,
+      themeDir = path.join('tmp', this.themeSlug);
+
+  if(fs.existsSync(themeDir + '/package.json')) {
+    fs.writeFileSync('package.json', this.readFileAsString(themeDir + '/package.json'));
+  } else {
+    this.template('_package.json', 'package.json');
+  }
+
+  if(fs.existsSync(themeDir + '/composer.json')) {
+    //merge the two
+    defaultContent = _.template(this.readFileAsString(__dirname + '/templates/_composer.json'), this);
+    console.log(defaultContent);
+    defaultContent = JSON.parse( defaultContent );
+    themeContent = JSON.parse( this.readFileAsString( themeDir + '/composer.json') );
+    _.merge(defaultContent.require, themeContent.require);
+    _.merge(defaultContent['require-dev'], themeContent['require-dev']);
+    fs.writeFileSync('composer.json', JSON.stringify(defaultContent, null, 4));
+  } else {
+    this.template('_composer.json', 'composer.json');
+  }
+
+  if(fs.existsSync(themeDir + '/.gitignore') ) {
+    defaultContent = this.readFileAsString( __dirname + '/templates/gitignore');
+    themeContent = this.readFileAsString( themeDir + '/.gitignore' );
+    themeContent = themeContent.split('\n');
+    if(themeContent.length + 0) {
+      defaultContent += '\n#Theme Ignored Files';
+      for(var i = 0; i < themeContent.length; i++) {
+        line = themeContent[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');;
+        if(line.charAt(0) !== '#') {
+          line = path.join('wp-content/themes/', this.themeSlug, '/') + line;
+        }
+        defaultContent += '\n' + line;
+      }
+    }
+    fs.writeFileSync('.gitignore', defaultContent);
+  } else {
+    this.copy('gitignore', '.gitignore');
+  }
+
+  if( ! ( fs.existsSync(themeDir + '/Gruntfile.js') 
+    || fs.existsSync(themeDir + '/gruntfile.js') 
+    || fs.existsSync(themeDir + '/Gruntfile.coffee') 
+    || fs.existsSync(themeDir + '/gruntfile.coffee') ) ) {
+    this.template('_Gruntfile.js', 'Gruntfile.js');
+  }
+
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
   //setup object-cache symlink
@@ -120,70 +217,80 @@ VoceWPProjectGenerator.prototype.setupFiles = function setupFiles() {
   fs.symlinkSync('drop-ins/memcached/object-cache.php', 'wp-content/object-cache.php');
 };
 
-VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
-  if(!this.generateTheme) return;
-  var done = this.async(),
-      themeArchive = 'https://github.com/voceconnect/skeletor/archive/master.tar.gz',
-      themeDir = path.join('tmp', this.themeSlug);
 
-  //download & expand https://github.com/voceconnect/skeletor/archive/master.tar.gz
-  this.tarball(themeArchive, themeDir, function(err) {
-    if(err) {
-      done(err);
-    }
-    done();
-  });
-
-};
 
 
 VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
+  var themeDir = path.join('wp-content/themes/', this.themeSlug),
+      files = this.expandFiles('**/*', { cwd: path.join('tmp', this.themeSlug), dot: true}),
+      themeConfig = require('./theme_configs/' + this.themeBase ),
+      replacements = [],
+      me = this,
+      gruntfileRegex = /^[G,g]runtfile\.[js,coffee]/,
+      pathsRegex = /[',"][^'"\s]*\/[^'"\s]*['"]/g,
+      themePath = 'wp-content/themes/' + this.themeSlug + '/',
+      ignoreFiles = [
+        '.git',
+        'LICENSE',
+        '.DS_Store',
+        'README',
+        'README.md',
+        '.gitignore',
+        'jshintrc',
+        'composer.json',
+        'composer.lock',
+        'package.json'
+      ];
+
   if(!this.generateTheme) return;
-  var themeDir = path.join('wp-content/themes/', this.themeSlug);
-  var files = this.expandFiles('**/*', { cwd: path.join('tmp', this.themeSlug), dot: true});
-  var me = this;
-  var ignoreFiles = [
-    '.git',
-    'LICENSE',
-    'README',
-    '.gitignores',
-    'jshintrc',
-    'Gruntfile.js',
-    'Gruntfile.coffee',
-    'gruntfile.js',
-    'gruntfile.coffee'
-  ];
-  var replacements = [
-    {find: /Text Domain: _s/g, replace: 'Text Domain: ' + this.themeTextDomain},
-    {find: /'_skeletor'/g, replace: "'" + this.themeTextDomain + "'"},
-    {find: /_skeletor-/g, replace: this.themeSlug},
-    {find: /_skeletor_/g, replace: this.themeUnderScored + '_'},
-    {find: / _skeletor/g, replace: ' ' + this.themeName}
-  ];
+
+
+  for(var i = 0; i < themeConfig.replacements.length; i++ ) {
+    replacements.push(
+      {
+        find: new RegExp(themeConfig.replacements[i].find, "g"),
+        replace: _.template(themeConfig.replacements[i].replace, this)
+      }
+    );
+  }
 
   files.forEach(function(file) {
-    var fileContents;
-    var filePath = path.join(themeDir, file);
-    var tmpFilePath = path.join('tmp', this.themeSlug, file);
+    var fileContents,
+        defaultContent,
+        themeComposer,
+        filePath = path.join(themeDir, file),
+        tmpFilePath = path.join('tmp', this.themeSlug, file);
+
     if(ignoreFiles.indexOf(file) !== -1) {
       return;
     }
 
-    //merge dependencies into project's composer.json
-    if(file === 'composer.json') {
-      projectComposer = JSON.parse( me.readFileAsString('composer.json') );
-      themeComposer = JSON.parse( me.readFileAsString(filePath) );
-      _.merge(projectComposer.require, themeComposer.require);
-      _.merge(projectComposer['require'], themeComposer['require-dev']);
-      me.write('composer.json', JSON.stringify(projectComposer, null, 4));
-      return;
-    }
+    fileContents = me.readFileAsString(tmpFilePath);
 
     //copy the file and make replacements
-    fileContents = me.readFileAsString(tmpFilePath);
     for(var i =0; i < replacements.length; i++) {
       fileContents = fileContents.replace(replacements[i].find, replacements[i].replace);
     }
+
+    if ( gruntfileRegex.test( file ) ) {
+      fileContents = _.template(fileContents, me);
+      fileContents = fileContents.replace( pathsRegex, function(match) {
+        match = match.replace(/['"]/g, '');
+        if( match.substring(0, 2) === './' ) {
+          return '"' + themePath + match.substring(2) + '"';
+        }
+        if( match.charAt(0) === '!' ) {
+          return '"!' + themePath + match.substring(1) + '"';
+        } else {
+          return '"' + themePath + match + '"';
+        }
+      });
+      //we're directly using fs to avoid the duplicate checks
+      fs.writeFileSync(file, fileContents);
+      return;
+    }
+    
+
     me.write(filePath, fileContents);
   }, me);
 
