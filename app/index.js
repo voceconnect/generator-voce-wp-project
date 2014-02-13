@@ -134,9 +134,20 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
 VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
   if(!this.generateTheme) return;
 
-  var themeConfig = require('./theme_configs/' + this.themeBase );
-  var done = this.async(),
+  var themeConfig = require('./theme_configs/' + this.themeBase ),
+      done = this.async(),
       themeDir = path.join('tmp', this.themeSlug);
+
+  //setup string replacements
+  this.replacements = []
+  for(var i = 0; i < themeConfig.replacements.length; i++ ) {
+    this.replacements.push(
+      {
+        find: new RegExp(themeConfig.replacements[i].find, "g"),
+        replace: _.template(themeConfig.replacements[i].replace, this)
+      }
+    );
+  }
 
   if(themeConfig.url.substring(0, 4) === 'git@') {
     this.spawnCommand('git', ['clone', themeConfig.url, themeDir])
@@ -161,10 +172,19 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
   var defaultContent,
       themeContent,
       line,
+      replaceValue,
       themeDir = path.join('tmp', this.themeSlug);
 
   if(fs.existsSync(themeDir + '/package.json')) {
-    fs.writeFileSync('package.json', this.readFileAsString(themeDir + '/package.json'));
+    themeContent = this.readFileAsString(themeDir + '/package.json');
+    //need to replace the theme strings with the project names
+    for(var i =0; i < this.replacements.length; i++) {
+      replaceValue = this.replacements[i].replace.replace(this.themeName, this.projectName);
+      replaceValue = replaceValue.replace(this.themeSlug, this.projectSlug);
+      themeContent = themeContent.replace(this.replacements[i].find, replaceValue);
+    }
+
+    fs.writeFileSync('package.json', themeContent);
   } else {
     this.template('_package.json', 'package.json');
   }
@@ -172,11 +192,11 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
   if(fs.existsSync(themeDir + '/composer.json')) {
     //merge the two
     defaultContent = _.template(this.readFileAsString(__dirname + '/templates/_composer.json'), this);
-    console.log(defaultContent);
     defaultContent = JSON.parse( defaultContent );
     themeContent = JSON.parse( this.readFileAsString( themeDir + '/composer.json') );
     _.merge(defaultContent.require, themeContent.require);
     _.merge(defaultContent['require-dev'], themeContent['require-dev']);
+    defaultContent.repositories = _.uniq(_.union(themeContent.repositories || [], defaultContent.repositories), 'url');
     fs.writeFileSync('composer.json', JSON.stringify(defaultContent, null, 4));
   } else {
     this.template('_composer.json', 'composer.json');
@@ -189,7 +209,10 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
     if(themeContent.length + 0) {
       defaultContent += '\n#Theme Ignored Files';
       for(var i = 0; i < themeContent.length; i++) {
-        line = themeContent[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');;
+        line = themeContent[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        if(line.lenght === 0) {
+          continue;
+        }
         if(line.charAt(0) !== '#') {
           line = path.join('wp-content/themes/', this.themeSlug, '/') + line;
         }
@@ -224,7 +247,6 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
   var themeDir = path.join('wp-content/themes/', this.themeSlug),
       files = this.expandFiles('**/*', { cwd: path.join('tmp', this.themeSlug), dot: true}),
       themeConfig = require('./theme_configs/' + this.themeBase ),
-      replacements = [],
       me = this,
       gruntfileRegex = /^[G,g]runtfile\.[js,coffee]/,
       pathsRegex = /[',"][^'"\s]*\/[^'"\s]*['"]/g,
@@ -244,16 +266,6 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
 
   if(!this.generateTheme) return;
 
-
-  for(var i = 0; i < themeConfig.replacements.length; i++ ) {
-    replacements.push(
-      {
-        find: new RegExp(themeConfig.replacements[i].find, "g"),
-        replace: _.template(themeConfig.replacements[i].replace, this)
-      }
-    );
-  }
-
   files.forEach(function(file) {
     var fileContents,
         defaultContent,
@@ -268,8 +280,8 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
     fileContents = me.readFileAsString(tmpFilePath);
 
     //copy the file and make replacements
-    for(var i =0; i < replacements.length; i++) {
-      fileContents = fileContents.replace(replacements[i].find, replacements[i].replace);
+    for(var i =0; i < me.replacements.length; i++) {
+      fileContents = fileContents.replace(me.replacements[i].find, me.replacements[i].replace);
     }
 
     if ( gruntfileRegex.test( file ) ) {

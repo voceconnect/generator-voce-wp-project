@@ -5,6 +5,7 @@
 		{"find": "'panthor'", "replace" : "'<%= themeTextDomain %>'"},
 		{"find": "panthor-", "replace" : "<%= themeSlug %>"},
 		{"find": "panthor_", "replace" : "<%= themeUnderScored %>_"},
-		{"find": " Panthor", "replace" : " <%= themeName %>"}
+		{"find": "([\\W])panthor", "replace" : "$1<%= themeSlug %>"},
+		{"find": "([\\W])Panthor", "replace" : "$1<%= themeName %>"}
 	]
 }

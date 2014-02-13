@@ -1,10 +1,11 @@
 {
 	"url": "git@github.com:voceconnect/hordak.git",
 	"replacements": [
-		{"find": "Text Domain: _hordak", "replace" : "Text Domain: <%= themeTextDomain %>"},
-		{"find": "'_hordak'", "replace" : "'<%= themeTextDomain %>'"},
-		{"find": "_hordak-", "replace" : "<%= themeSlug %>"},
-		{"find": "_hordak_", "replace" : "<%= themeUnderScored %>_"},
-		{"find": " _hordak", "replace" : " <%= themeName %>"}
+		{"find": "Text Domain: hordak", "replace" : "Text Domain: <%= themeTextDomain %>"},
+		{"find": "'hordak'", "replace" : "'<%= themeTextDomain %>'"},
+		{"find": "hordak-", "replace" : "<%= themeSlug %>"},
+		{"find": "hordak_", "replace" : "<%= themeUnderScored %>_"},
+		{"find": "([\\W])hordak", "replace" : "$1<%= themeSlug %>"},
+		{"find": "([\\W])Hordak", "replace" : "$1<%= themeName %>"}
 	]
 }

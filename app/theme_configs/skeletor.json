@@ -5,6 +5,7 @@
 		{"find": "'skeletor'", "replace" : "'<%= themeTextDomain %>'"},
 		{"find": "skeletor-", "replace" : "<%= themeSlug %>"},
 		{"find": "skeletor_", "replace" : "<%= themeUnderScored %>_"},
-		{"find": " skeletor", "replace" : " <%= themeName %>"}
+		{"find": "([\\W])skeletor", "replace" : "$1<%= themeSlug %>"},
+		{"find": "([\\W])Skeletor", "replace" : "$1<%= themeName %>"}
 	]
 }
