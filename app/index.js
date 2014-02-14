@@ -209,8 +209,8 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
     if(themeContent.length + 0) {
       defaultContent += '\n#Theme Ignored Files';
       for(var i = 0; i < themeContent.length; i++) {
-        line = themeContent[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
-        if(line.lenght === 0) {
+        line = themeContent[i].replace(/^\s\s*/, '').replace(/\s\s*$/, '').replace(this.themeBase, this.themeSlug);
+        if(line.length === 0) {
           continue;
         }
         if(line.charAt(0) !== '#') {
