@@ -252,19 +252,25 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
       pathsRegex = /[',"][^'"\s]*\/[^'"\s]*['"]/g,
       themePath = 'wp-content/themes/' + this.themeSlug + '/',
       ignoreFiles = [
-        '.git',
-        'LICENSE',
-        '.DS_Store',
-        'README',
-        'README.md',
-        '.gitignore',
-        'jshintrc',
-        'composer.json',
-        'composer.lock',
-        'package.json'
+        /^.git\//,
+        /^LICENSE$/,
+        /^.DS_Store$/,
+        /^README$/,
+        /^README.md$/,
+        /^.gitignore$/,
+        /^jshintrc$/,
+        /^composer.json$/,
+        /^composer.lock$/,
+        /^package.json$/
       ];
 
   if(!this.generateTheme) return;
+
+  files = _.filter(files, function(file) {
+    return !ignoreFiles.some(function(regex) {
+      return regex.test(file);
+    });
+  });
 
   files.forEach(function(file) {
     var fileContents,
