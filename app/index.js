@@ -237,7 +237,7 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
   try {
     fs.unlinkSync('wp-content/object-cache.php');
   } catch(e) {}
-  fs.symlinkSync('drop-ins/memcached/object-cache.php', 'wp-content/object-cache.php');
+  fs.symlinkSync('drop-ins/memcached-redux/object-cache.php', 'wp-content/object-cache.php');
 };
 
 
