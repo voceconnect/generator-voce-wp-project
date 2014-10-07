@@ -246,7 +246,6 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
 VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
   var themeDir = path.join('wp-content/themes/', this.themeSlug),
       files = this.expandFiles('**/*', { cwd: path.join('tmp', this.themeSlug), dot: true}),
-      themeConfig = require('./theme_configs/' + this.themeBase ),
       me = this,
       gruntfileRegex = /^[G,g]runtfile\.[js,coffee]/,
       pathsRegex = /[',"][^'"\s]*\/[^'"\s]*['"]/g,
@@ -264,7 +263,12 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
         /^package.json$/
       ];
 
-  if(!this.generateTheme) return;
+  if(this.generateTheme) {
+    var themeConfig = require('./theme_configs/' + this.themeBase );
+  } else {
+    return;
+  }
+
 
   files = _.filter(files, function(file) {
     return !ignoreFiles.some(function(regex) {
