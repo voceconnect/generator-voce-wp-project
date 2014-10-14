@@ -14,7 +14,8 @@
         }
     ],
     "config": {
-        "vendor-dir": "wp-content/mu-plugins"
+        "vendor-dir": "wp-content/mu-plugins",
+        "bin-dir": "bin"
     },
     "require"     : {
         "voceconnect/wordpress": "~3.9.0",
@@ -27,7 +28,8 @@
         "wpackagist/debug-bar-cron": "9999999-dev",
         "wpackagist/developer": "9999999-dev",
         "wpackagist/rewrite-rules-inspector": "9999999-dev",
-        "wpackagist/log-deprecated-notices": "9999999-dev"
+        "wpackagist/log-deprecated-notices": "9999999-dev",
+        "voceconnect/wp-qa-suite": "1.0.0"
     },
     "extra"       : {
         "installer-paths": {

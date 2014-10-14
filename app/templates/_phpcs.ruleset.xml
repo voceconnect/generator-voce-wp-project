@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<ruleset name="<%= projectName %>">
+  <description><%= projectName %> Coding Standards</description>
+
+  <exclude-pattern>wp-content/drop-ins/*</exclude-pattern>
+
+  <rule ref="Squiz.PHP.CommentedOutCode"/>
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace"/>
+  <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+  <rule ref="Generic.Commenting.Todo"/>
+  <rule ref="Generic.ControlStructures.InlineControlStructure"/>
+
+  <!-- include rules from WordPress-Extra -->
+  <rule ref="WordPress.XSS.EscapeOutput"/>
+  <rule ref="WordPress.PHP.DiscouragedFunctions"/>
+
+  <!-- include rules from WordPress-Core -->
+  <rule ref="WordPress-Core">
+    <exclude name="WordPress.WhiteSpace.ControlStructureSpacing" />
+    <exclude name="WordPress.Functions.FunctionCallSignature" />
+  </rule>
+</ruleset>

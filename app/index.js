@@ -231,6 +231,11 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
     this.template('_Gruntfile.js', 'Gruntfile.js');
   }
 
+  this.copy('phpunit.xml', 'phpunit.xml');
+  this.copy('travis.yml', 'travis.yml');
+  this.mkdir('tests');
+  this.copy('_bootstrap.php', 'tests/bootstrap.php');
+  this.template('_phpcs.ruleset.xml', 'phpcs.ruleset.xml');
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
   //setup object-cache symlink

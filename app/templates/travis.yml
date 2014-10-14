@@ -1,0 +1,16 @@
+---
+language: php
+
+php:
+  - 5.5
+  - 5.4
+
+env:
+  - WP_VERSION=latest
+
+before_script:
+  - composer install --dev
+
+script:
+  - vendor/bin/wp-qa-syntax
+  - vendor/bin/wp-qa-phpunit $WP_VERSION
