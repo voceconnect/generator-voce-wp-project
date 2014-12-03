@@ -1,6 +1,6 @@
 {
   "name": "generator-voce-wp-project",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A Yeoman generator for Voce WordPress Projects",
   "keywords": [
     "yeoman-generator"
