@@ -12,5 +12,5 @@ before_script:
   - composer install --dev
 
 script:
-  - vendor/bin/wp-qa-syntax
-  - vendor/bin/wp-qa-phpunit $WP_VERSION
+  - bin/wp-qa-syntax
+  - bin/wp-qa-phpunit $WP_VERSION

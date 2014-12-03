@@ -232,7 +232,7 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
   }
 
   this.copy('phpunit.xml', 'phpunit.xml');
-  this.copy('travis.yml', 'travis.yml');
+  this.copy('travis.yml', '.travis.yml');
   this.mkdir('tests');
   this.copy('_bootstrap.php', 'tests/bootstrap.php');
   this.template('_phpcs.ruleset.xml', 'phpcs.ruleset.xml');
