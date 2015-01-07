@@ -14,8 +14,8 @@ var VoceWPProjectGenerator = module.exports = function VoceWPProjectGenerator(ar
   yeoman.generators.Base.apply(this, arguments);
 
   this.on('end', function () {
-    this.installDependencies({ 
-      skipInstall: options['skip-install'], 
+    this.installDependencies({
+      skipInstall: options['skip-install'],
       bower: false,
       callback: function() {
         console.log(chalk.green('\nBuilding the project for the first time...\n\n'));
@@ -31,7 +31,7 @@ util.inherits(VoceWPProjectGenerator, yeoman.generators.Base);
 VoceWPProjectGenerator.prototype.askFor = function askFor() {
   var cb = this.async();
 
-  var welcome = 
+  var welcome =
     chalk.magenta('\n                       : ') + chalk.yellow('? ') + chalk.magenta(',') +
     chalk.magenta('\n                     ,') + chalk.yellow('I??????') + chalk.magenta('.') +
     chalk.magenta('\n                   ?') + chalk.yellow('.?II???.??') + chalk.magenta(':') +
@@ -154,7 +154,7 @@ VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
       .on('exit', function(err) {
         if(err) {
           return done(err);
-        } 
+        }
         return done();
       });
   } else {
@@ -224,9 +224,9 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
     this.copy('gitignore', '.gitignore');
   }
 
-  if( ! ( fs.existsSync(themeDir + '/Gruntfile.js') 
-    || fs.existsSync(themeDir + '/gruntfile.js') 
-    || fs.existsSync(themeDir + '/Gruntfile.coffee') 
+  if( ! ( fs.existsSync(themeDir + '/Gruntfile.js')
+    || fs.existsSync(themeDir + '/gruntfile.js')
+    || fs.existsSync(themeDir + '/Gruntfile.coffee')
     || fs.existsSync(themeDir + '/gruntfile.coffee') ) ) {
     this.template('_Gruntfile.js', 'Gruntfile.js');
   }
@@ -316,7 +316,7 @@ VoceWPProjectGenerator.prototype.createTheme = function createTheme() {
       fs.writeFileSync(file, fileContents);
       return;
     }
-    
+
 
     me.write(filePath, fileContents);
   }, me);
