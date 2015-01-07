@@ -20,7 +20,7 @@
     "require"     : {
         "voceconnect/wordpress": ">=4.0.0",
         "wpackagist/memcached-redux": "~0.1.3",
-        "voceconnect/required-plugins": "~0.2.0"
+        "voceconnect/required-plugins": "~0.2"
     },
     "require-dev" : {
         "wpackagist/debug-bar": "9999999-dev",
@@ -36,5 +36,5 @@
             "wp/": ["voceconnect/wordpress"],
             "wp-content/drop-ins/{$name}/": ["wpackagist/memcached-redux"]
         }
-    }   
+    }
 }
