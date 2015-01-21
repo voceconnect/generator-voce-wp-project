@@ -19,22 +19,22 @@
     },
     "require"     : {
         "voceconnect/wordpress": ">=4.0.0",
-        "wpackagist/memcached-redux": "~0.1.3",
+        "wpackagist-plugin/memcached-redux": "~0.1.3",
         "voceconnect/required-plugins": "~0.2"
     },
     "require-dev" : {
-        "wpackagist/debug-bar": "9999999-dev",
-        "wpackagist/debug-bar-extender": "9999999-dev",
-        "wpackagist/debug-bar-cron": "9999999-dev",
-        "wpackagist/developer": "9999999-dev",
-        "wpackagist/rewrite-rules-inspector": "9999999-dev",
-        "wpackagist/log-deprecated-notices": "9999999-dev",
+        "wpackagist-plugin/debug-bar": "9999999-dev",
+        "wpackagist-plugin/debug-bar-extender": "9999999-dev",
+        "wpackagist-plugin/debug-bar-cron": "9999999-dev",
+        "wpackagist-plugin/developer": "9999999-dev",
+        "wpackagist-plugin/rewrite-rules-inspector": "9999999-dev",
+        "wpackagist-plugin/log-deprecated-notices": "9999999-dev",
         "voceconnect/wp-qa-suite": "1.0.0"
     },
     "extra"       : {
         "installer-paths": {
             "wp/": ["voceconnect/wordpress"],
-            "wp-content/drop-ins/{$name}/": ["wpackagist/memcached-redux"]
+            "wp-content/drop-ins/{$name}/": ["wpackagist-plugin/memcached-redux"]
         }
     }
 }
