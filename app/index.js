@@ -93,6 +93,13 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
       }
     },
     {
+      name: 'themeSlug',
+      message: 'What should the them slug be?',
+      default: function(answers) {
+        return _.slugify(answers.themeName);
+      }
+    },
+    {
       name: 'themeBase',
       type: 'list',
       message: 'What base theme would you like to use?',
@@ -118,7 +125,7 @@ VoceWPProjectGenerator.prototype.askFor = function askFor() {
     this.generateTheme = props.generateTheme;
     if(this.generateTheme) {
       this.themeName = props.themeName;
-      this.themeSlug = _.slugify(this.themeName);
+      this.themeSlug = props.themeSlug;
       this.themeUnderScored = this.themeSlug.replace(/\-/g, '_');
       this.themeTextDomain = this.themeUnderScored;
       this.themeBase = props.themeBase;
@@ -136,7 +143,8 @@ VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
 
   var themeConfig = require('./theme_configs/' + this.themeBase ),
       done = this.async(),
-      themeDir = path.join('tmp', this.themeSlug);
+      themeDir = path.join('tmp', this.themeSlug),
+      args;
 
   //setup string replacements
   this.replacements = []
@@ -150,9 +158,16 @@ VoceWPProjectGenerator.prototype.fetchTheme = function fetchTheme() {
   }
 
   if(themeConfig.url.substring(0, 4) === 'git@') {
-    this.spawnCommand('git', ['clone', themeConfig.url, themeDir])
+    if(typeof themeConfig.branch == 'undefined') {
+      args = ['clone', themeConfig.url, themeDir]
+    } else {
+      args = ['clone', '-b', themeConfig.branch, themeConfig.url, themeDir];
+    }
+    console.log(JSON.stringify(args, null, 4));
+    this.spawnCommand('git', args)
       .on('exit', function(err) {
         if(err) {
+          console.log(JSON.stringify(err, null, 4));
           return done(err);
         }
         return done();
@@ -236,6 +251,7 @@ VoceWPProjectGenerator.prototype.setupConfigFiles = function setupConfigFiles() 
   this.mkdir('tests');
   this.copy('_bootstrap.php', 'tests/bootstrap.php');
   this.template('_phpcs.ruleset.xml', 'phpcs.ruleset.xml');
+  this.template('_README.md', 'README.md');
   this.copy('index.php', 'index.php');
   this.mkdir('wp-content');
   //setup object-cache symlink

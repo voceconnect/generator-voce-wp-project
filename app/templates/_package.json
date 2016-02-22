@@ -1,15 +1,23 @@
 {
-    "name": "<%= projectSlug %>",
-    "description": "<%= projectName %>",
-    "version": "0.1.0",
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:voceconnect/<%= projectSlug %>.git"
-    },
-    "bugs": {
-        "url": "https://github.com/voceconnect/<%= projectSlug %>/issues"
-    },
-    "devDependencies": {
-        "grunt-voce-plugins": "latest"
-    }
+  "name": "<%= projectSlug %>",
+  "description": "<%= projectName %>",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:voceconnect/<%= projectSlug %>.git"
+  },
+  "bugs": {
+    "url": "https://github.com/voceconnect/<%= projectSlug %>/issues"
+  },
+  "dependencies": {
+    "grunt": ">=0.4.0",
+    "grunt-contrib-compass": ">=1.1.0",
+    "grunt-peon-build": ">=0.1.0",
+    "grunt-composer": ">=0.4.0"
+  },
+  "devDependencies": {
+    "grunt-contrib-imagemin": ">=1.0.0",
+    "grunt-contrib-jshint": ">=0.11.0",
+    "grunt-contrib-watch": ">=0.6.1"
+  }
 }
