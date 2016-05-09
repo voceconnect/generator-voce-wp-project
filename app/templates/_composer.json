@@ -6,11 +6,11 @@
     "repositories": [
         {
             "type": "composer",
-            "url" : "http://wp-plugins.packagist.voceconnect.com/"
+            "url" : "https://wpackagist.org/"
         },
         {
             "type": "composer",
-            "url" : "http://packagist.voceconnect.com"
+            "url" : "https://packagist.voceconnect.com"
         }
     ],
     "config": {
@@ -18,9 +18,8 @@
         "bin-dir": "bin"
     },
     "require"     : {
-        "voceconnect/wordpress": ">=4.0.0",
-        "wpackagist-plugin/memcached-redux": "~0.1.3",
-        "voceconnect/required-plugins": "~0.2"
+        "voceconnect/wordpress": "~4.5.2",
+        "wpackagist-plugin/memcached-redux": "~0.1.3"
     },
     "require-dev" : {
         "wpackagist-plugin/debug-bar": "9999999-dev",
